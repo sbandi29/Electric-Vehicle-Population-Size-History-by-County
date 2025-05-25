@@ -69,5 +69,5 @@ The dataset used is `Electric_Vehicle_Population_Size_History_By_County.csv`, wh
 
 I’m **Sriraj Bandi**, a graduate student in Data Analytics Engineering at George Mason University. This project allowed me to combine geospatial data processing with time-series visualization to draw meaningful insights from EV registration data.
 
-📧 Email: srirajbandi@gmail.com  
+📧 Email: srirajbandi29@gmail.com  
 🔗 GitHub: [(https://github.com/sbandi29/Electric-Vehicle-Population-Size-History-by-County))
