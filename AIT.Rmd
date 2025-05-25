@@ -1,0 +1,80 @@
+---
+title: "AIT"
+author: "B.Sriraj"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+ev_data=read.csv("Electric_Vehicle_Population_Size_History_By_County.csv")
+```
+
+```{r}
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(lubridate)
+library(reshape2)
+ev_data$Year <- year(as.Date(ev_data$Date, format="%B %d %Y"))
+
+# Summarise data by year
+yearly_data <- ev_data %>% 
+               group_by(Year) %>% 
+               summarise(Total_BEVs = sum(`Battery.Electric.Vehicles..BEVs.`),
+                         Total_PHEVs = sum(`Plug.In.Hybrid.Electric.Vehicles..PHEVs.`))
+
+# Melt the data for grouped bar chart
+yearly_data_melted <- melt(yearly_data, id.vars = 'Year')
+
+yearly_data_melted$variable <- factor(yearly_data_melted$variable, levels = c("Total_BEVs", "Total_PHEVs"))
+p <- ggplot(yearly_data_melted, aes(x=factor(Year), y=value, fill=variable)) +
+     geom_bar(stat='identity', position=position_dodge()) +
+     scale_fill_manual(values=c("Total_BEVs"="violet", "Total_PHEVs"="lightblue")) +
+     theme_minimal() +
+     labs(title="Yearly Comparison of BEVs and PHEVs (Grouped Bar Chart)",
+          x="Year",
+          y="Total Vehicles",
+          fill="Vehicle Type")
+ggplotly(p)
+
+
+```
+
+
+```{r}
+ev_data$Year <- year(as.Date(ev_data$Date, format="%B %d %Y"))
+
+# Group data by year and vehicle type
+yearly_totals <- ev_data %>% 
+                 group_by(Year) %>% 
+                 summarise(Total_BEVs = sum(`Battery.Electric.Vehicles..BEVs.`),
+                           Total_PHEVs = sum(`Plug.In.Hybrid.Electric.Vehicles..PHEVs.`))
+
+# Creating the area plot
+p <- ggplot(yearly_totals, aes(x = Year)) +
+     geom_area(aes(y = Total_BEVs, fill = 'BEVs')) +
+     geom_area(aes(y = Total_PHEVs, fill = 'PHEVs'), position = 'stack') +
+     scale_fill_manual(values = c("BEVs" = "violet", "PHEVs" = "skyblue")) +
+     theme_minimal() +
+     labs(title = "Yearly Growth of BEVs and PHEVs (Area Plot)",
+          x = "Year",
+          y = "Total Number of Vehicles",
+          fill = "Vehicle Type")
+
+# Convert ggplot to an interactive plotly object
+ggplotly(p)
+
+```
+
+
+```{r}
+p <- ggplot(ev_data, aes(x=`Total.Vehicles`, y=`Electric.Vehicle..EV..Total`, color=`Percent.Electric.Vehicles`)) +
+     geom_point()
+ggplotly(p)
+
+```
